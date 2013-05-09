@@ -35,7 +35,7 @@ public class Walk extends Node {
     @Override
     public void execute() {
 
-        WhiteBerries.status = "Walking to berries";
+
 
         SceneObject gates = SceneEntities.getNearest(gate);
         SceneObject woodenGate = SceneEntities.getNearest(65386);
@@ -43,8 +43,7 @@ public class Walk extends Node {
 
         if(!WhiteBerries.rest){
         if(Calculations.distanceTo(Paths.bankTile) > 10){
-            if(gates != null){
-                if(Calculations.distanceTo(gates) < 3){
+            if(gates != null && Calculations.distanceTo(gates) < 3){
                     if(gates.isOnScreen()){
                         gates.interact("Open");
                         Timer opening = new Timer(4000);
@@ -54,9 +53,6 @@ public class Walk extends Node {
                     }else{
                         Camera.turnTo(gates);
                     }
-                }else{
-                    Walking.findPath(gates).traverse();
-                }
             }else if(woodenGate != null && Calculations.distanceTo(woodenGate) < 5){
 
                     if(woodenGate.isOnScreen()){
@@ -83,6 +79,7 @@ public class Walk extends Node {
             }else{
                 if(toBerries()){
                     Paths.toBerries.randomize(-1, 1).traverse();
+                    WhiteBerries.status = "Walking to berries";
                 }else if(toBank()){
                     if (Calculations.distanceTo(new Tile(3090, 3957, 0)) < 3){
                         if(SceneEntities.getNearest(5959) != null){
@@ -91,6 +88,7 @@ public class Walk extends Node {
                         }
                     }else{
                     Paths.toBank.randomize(-1, 1).traverse();
+                    WhiteBerries.status = "Walking to bank";
                     }
                 }
                 Timer walking = new Timer(1000);

@@ -29,41 +29,37 @@ public class Banking extends Node {
         WhiteBerries.status = "Banking";
         NPC banker = NPCs.getNearest("Gundai");
 
-
-
-        if(banker != null){
-
-            if(Bank.isOpen()){
-                WhiteBerries.counting = 0;
-                banked += Inventory.getCount(239);
-                if(Inventory.getItem(239) != null){
-                    Bank.depositInventory();
-                    sleep(900,1200);
-                    if(Inventory.getItem(239) == null){
-                        Bank.close();
+        if(Bank.isOpen()){
+            WhiteBerries.counting = 0;
+            banked += Inventory.getCount(239);
+            if(Inventory.getItem(239) != null){
+                Bank.depositInventory();
+                sleep(900,1200);
+            }
+            if(Inventory.getItem(239) == null){
+                Bank.close();
+            }
+        }else{
+            if(banker != null){
+                if(Calculations.distanceTo(banker) < 3){
+                    if(banker.isOnScreen()){
+                        banker.interact("Bank");
+                        Timer opening = new Timer(3000);
+                        while(opening.isRunning() && !Bank.isOpen()){
+                            sleep(50, 70);
+                        }
+                    }else{
+                        Camera.turnTo(banker.getLocation());
                     }
-                }
-
-            }else{
-
-            if(Calculations.distanceTo(banker) < 3){
-                if(banker.isOnScreen()){
-                    banker.interact("Bank");
-                    sleep(2900,3400);
                 }else{
-                    Camera.turnTo(banker.getLocation());
-                }
-            }else{
-                Walking.findPath(banker).traverse();
-                Timer walk = new Timer(2000);
-                while(walk.isRunning() && Players.getLocal().isMoving()){
-                    Task.sleep(50, 70);
+                    Walking.findPath(banker).traverse();
+                    Timer walk = new Timer(2000);
+                    while(walk.isRunning() && Players.getLocal().isMoving()){
+                        Task.sleep(50, 70);
+                    }
                 }
             }
         }
-
-        }
-
     }
 }
 
