@@ -17,6 +17,7 @@ import org.powerbot.game.api.methods.tab.Inventory;
 import org.powerbot.game.api.methods.widget.Camera;
 import org.powerbot.game.api.methods.widget.WidgetCache;
 import org.powerbot.game.api.util.Random;
+import org.powerbot.game.api.util.Timer;
 import org.powerbot.game.client.Client;
 import whiteberries.gui.OnStop;
 import whiteberries.gui.StartGUI;
@@ -45,7 +46,6 @@ public class WhiteBerries extends ActiveScript implements MessageListener, Paint
     public static int counting = 0;
     private int taken = 0, price;
     public static boolean dead = false;
-    public long runTime, startTime;
     public static boolean guiWait = true;
     StartGUI g = new StartGUI();
     OnStop s = new OnStop();
@@ -54,6 +54,7 @@ public class WhiteBerries extends ActiveScript implements MessageListener, Paint
     private int mouseX = 0;
     public static String status = "";
     private int deaths = 0;
+    private Timer run = new Timer(0);
 
     public static int getPrice(final int id) {
         final String add = "http://scriptwith.us/api/?return=text&item=" + id;
@@ -81,7 +82,6 @@ public class WhiteBerries extends ActiveScript implements MessageListener, Paint
 
     public void onStart(){
         provide(new Looting(), new Banking(), new Walk());
-        startTime = System.currentTimeMillis();
         price = getPrice(239);
         g.setVisible(true);
         Mouse.setSpeed(Mouse.Speed.NORMAL);
@@ -217,7 +217,7 @@ public class WhiteBerries extends ActiveScript implements MessageListener, Paint
         g.drawImage(img1, 2, 392, null);
         g.setFont(font1);
         g.setColor(color1);
-        g.drawString("" + time(runTime), 94, 445);
+        g.drawString(run.toElapsedString(), 94, 445);
         g.drawString("" + taken, 114, 469);
         g.drawString("" + pHr(taken), 175, 498);
         g.drawString("" + df.format((taken * price)), 321, 444);
@@ -236,32 +236,12 @@ public class WhiteBerries extends ActiveScript implements MessageListener, Paint
         g.setColor(Color.GREEN);
         Walking.getDestination().getLocation().draw(g);
         }
-        runTime = System.currentTimeMillis() - startTime;
     }
 
 
     private int pHr(int number) {
-        int ret = (int) ((3600000D / runTime) * number);
+        int ret = (int) ((3600000D / run.getElapsed()) * number);
         return ret;
-    }
-
-    private String time(long amount) {
-        String formated = "";
-        long days = TimeUnit.MILLISECONDS.toDays(amount);
-        long hours = TimeUnit.MILLISECONDS.toHours(amount)
-                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(amount));
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(amount)
-                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS
-                .toHours(amount));
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(amount)
-                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS
-                .toMinutes(amount));
-        if (days == 0) {
-            formated = (hours + ":" + minutes + ":" + seconds);
-        } else {
-            formated = (days + ":" + hours + ":" + minutes + ":" + seconds);
-        }
-        return formated;
     }
 
     private void cameraMove(){
